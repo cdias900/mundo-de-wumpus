@@ -15,31 +15,50 @@ function App() {
         loading: false
     })
     const [ score, setScore ] = useState(0);
-    
+    const [ hasGold, setHasGold ] = useState(false);
+    const [ pits, setPits ] = useState(1);
+
     const handleChange = e => {
         if(e.target.value > 15) return setSize(15);
         if(e.target.value === '') setGameMap([]);
-        return setSize(e.target.value);
+        return setSize(e.target.value.replace(/\D+/g, ''));
+    }
+
+    const handlePitsChange = e => {
+        if(e.target.value > 15) return setPits(15);
+        return setPits(e.target.value.replace(/\D+/g, ''));
     }
 
     const generateMap = () => {
+        if(size <= 2) return;
         const gameMapArr = [];
         for(let k=0;k<+size;k++){
-            for(let k=0;k<+size;k++){                
+            for(let k=0;k<+size;k++){
             gameMapArr.push(1);
             }
         }
-        let r = Math.floor(Math.random() * (Math.pow(size, 2) - 1));
-        if(r !== +size-1){
-            gameMapArr[r] = 'W';
-        } else {
-            gameMapArr[r + 1] = 'W';
+        gameMapArr[size-1] = 'P';
+        let r;
+        for(let i=0;i<pits;i++){
+            do{
+                r = Math.ceil(Math.random() * (Math.pow(size, 2) - 1));
+            }while(gameMapArr[r] !== 1);
+            gameMapArr[r] = 'B';
         }
-        r = Math.floor(Math.random() * (Math.pow(size, 2) - 1));
-        if(r !== +size-1){
-            gameMapArr[r] === 1 ? gameMapArr[r] = 'PIT' : gameMapArr[r] += ' PIT';
+
+        do{
+            r = Math.ceil(Math.random() * (Math.pow(size, 2) - 1));
+        } while(gameMapArr[r] !== 1);
+        gameMapArr[r] = 'G';
+
+        let flag = false;
+        while(!flag){
+            r = Math.ceil(Math.random() * (Math.pow(size, 2) - 1));
+            if(gameMapArr[r] === 1){
+                gameMapArr[r] = 'W';
+                flag = true;
+            }
         }
-        gameMapArr[+size-1] = 'P';
         setPlayerMoves(0);
         setScore(0);
         setEffectiveSite(+size);
@@ -53,20 +72,26 @@ function App() {
         setScore(score - 1);
         setPlayerMoves(playerMoves + 1);
         gameMapArr[currentLocation] = 1;
-        if(gameMapArr[newLocation] === 'W'){
-            endGame(score - 1);
+        if(gameMapArr[newLocation] === 'W' || gameMapArr[newLocation] === 'B'){
+            endGame(score - 1, false);
+        } else if(gameMapArr[newLocation] === 'G'){
+            setHasGold(true);
+            gameMapArr[newLocation] = 'P';
         } else {
             gameMapArr[newLocation] = 'P';
+        }
+        if(newLocation === size - 1 && hasGold){
+            endGame(score - 1, true);
         }
         setPlayerLocation(newLocation);
         setGameMap(gameMapArr);
     }
 
-    const endGame = s => {
+    const endGame = (sc, win) => {
         setGameStatus(false);
         setModal({
             status: true,
-            message: <>Player Morreu! <br/>Pontuação: {s - 1000}</> ,
+            message: <>Player {win ? "Ganhou" : "Morreu"}! <br/>Pontuação: {sc + (win ? 1000 : -1000)}</> ,
             loading: false
         })
     }
@@ -108,18 +133,23 @@ function App() {
         <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
         <div>
             <label htmlFor="size">Tamanho do mapa:</label>
-            <input id="size" type="text" value={size} onChange={handleChange}/>
+            <input style={{width: 30}} id="size" type="text" value={size} onChange={handleChange}/>
             <button onClick={generateMap}>Alterar Mapa</button>
         </div>
-        
+        <div>
+            <label htmlFor="pits">Quantidade de buracos:</label>
+            <input style={{width: 30}} id="pits" type="text" value={pits} onChange={handlePitsChange}/>
+        </div>
         <div className="Map" style={{columns: effectiveSize, columnGap: '2px'}}>
-            {gameMap.map((el, index) => 
-            <div key={index} onClick={() => console.log(index)} className="Square">
-                {el === 'P' ? <p>PLAYER</p> : null}
-                {el === 'W' ? <p>WUMPUS</p> : null}
+            {gameMap.map((el, index) =>
+            <div key={index} onClick={() => console.log(index, el)} className="Square">
+                {el === 'P' ? <p>P</p> : null}
+                {el === 'W' ? <p>W</p> : null}
+                {el === 'B' ? <p>B</p> : null}
+                {el === 'G' ? <p>G</p> : null}
             </div>)}
         </div>
-        <div>Movimentos: {playerMoves}  Score: {score}</div>
+        <div>Movimentos: {playerMoves}  Pontuação: {score}</div>
         <div className={`BtnDiv ${!gameStatus ? 'Disabled' : ''}`}>
             <button type="button" disabled={!gameStatus} onClick={() => movePlayer('w')}>{"^"}</button>
             <div>
