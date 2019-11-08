@@ -1,0 +1,39 @@
+.Modal {
+    position: fixed;
+    z-index: 500;
+    background-color: white;
+    width: 70%;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 20px;
+    box-shadow: 1px 1px 1px black;
+    padding: 16px;
+    left: 15%;
+    top: 30%;
+    box-sizing: border-box;
+    transition: all 0.3s ease-out;
+}
+
+@media (min-width: 600px) {
+    .Modal {
+        width: 500px;
+        left: calc(50% - 250px);
+    }
+}
+
+.Modal p {
+    text-align: center;
+}
+
+.Modal button {
+    text-align: center;
+    font-size: 30px;
+    border: none;
+    background-color: rgba(0,0,0,0);
+    color: #000;
+    position: fixed;
+    right: 0;
+    top: -10px;
+    padding: 0;
+    cursor: pointer;
+}

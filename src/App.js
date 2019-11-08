@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import Modal from './components/Layout/Modal';
 
 function App() {
     const [ size, setSize ] = useState('3');
@@ -7,6 +8,14 @@ function App() {
     const [ effectiveSize, setEffectiveSite ] = useState('');
     const [ playerLocation, setPlayerLocation ] = useState(+size-1);
     const [ gameStatus, setGameStatus ] = useState(false);
+    const [ playerMoves, setPlayerMoves ] = useState(0);
+    const [ modal, setModal ] = useState({
+        status: false,
+        message: '',
+        loading: false
+    })
+    const [ score, setScore ] = useState(0);
+    
     const handleChange = e => {
         if(e.target.value > 15) return setSize(15);
         if(e.target.value === '') setGameMap([]);
@@ -26,7 +35,13 @@ function App() {
         } else {
             gameMapArr[r + 1] = 'W';
         }
+        r = Math.floor(Math.random() * (Math.pow(size, 2) - 1));
+        if(r !== +size-1){
+            gameMapArr[r] === 1 ? gameMapArr[r] = 'PIT' : gameMapArr[r] += ' PIT';
+        }
         gameMapArr[+size-1] = 'P';
+        setPlayerMoves(0);
+        setScore(0);
         setEffectiveSite(+size);
         setPlayerLocation(+size-1);
         setGameStatus(true);
@@ -35,9 +50,11 @@ function App() {
 
     const updatePlayerLocation = (currentLocation, newLocation) => {
         let gameMapArr = [...gameMap];
+        setScore(score - 1);
+        setPlayerMoves(playerMoves + 1);
         gameMapArr[currentLocation] = 1;
         if(gameMapArr[newLocation] === 'W'){
-            endGame();
+            endGame(score - 1);
         } else {
             gameMapArr[newLocation] = 'P';
         }
@@ -45,10 +62,20 @@ function App() {
         setGameMap(gameMapArr);
     }
 
-    const endGame = () => {
+    const endGame = s => {
         setGameStatus(false);
-        console.log("Player morreu!")
+        setModal({
+            status: true,
+            message: <p>Player Morreu! <br/>Pontuação: {s - 1000}</p> ,
+            loading: false
+        })
     }
+
+    const closeModal = () => setModal({
+        status: false,
+        message: '',
+        loading: false
+    });
 
     const movePlayer = (action) => {
         switch(action){
@@ -78,6 +105,7 @@ function App() {
     }
   return (
     <div className="App" onKeyPress={e => gameStatus ? movePlayer(e.key) : null} tabIndex="0">
+        <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
         <div>
             <label htmlFor="size">Tamanho do mapa:</label>
             <input id="size" type="text" value={size} onChange={handleChange}/>
@@ -91,6 +119,7 @@ function App() {
                 {el === 'W' ? <p>WUMPUS</p> : null}
             </div>)}
         </div>
+        <div>Movimentos: {playerMoves}  Score: {score}</div>
         <div className={`BtnDiv ${!gameStatus ? 'Disabled' : ''}`}>
             <button type="button" disabled={!gameStatus} onClick={() => movePlayer('w')}>{"^"}</button>
             <div>
