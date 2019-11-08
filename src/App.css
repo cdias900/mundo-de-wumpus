@@ -14,3 +14,19 @@
     display: inline-block;
     margin: 50px auto;
 }
+
+.BtnDiv button{
+  background-color: #ccc;
+  border: .5px solid black;
+  border-radius: 5px;
+  width: 45px;
+  height: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 2px 2px;
+  cursor: pointer;
+}
+
+.BtnDiv button:hover{
+  transform: scale(1.1, 1.1);
+}
