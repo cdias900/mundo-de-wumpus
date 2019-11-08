@@ -30,3 +30,11 @@
 .BtnDiv button:hover{
   transform: scale(1.1, 1.1);
 }
+
+.Disabled button{
+  cursor: not-allowed !important;
+}
+
+.Disabled button:hover{
+  transform: scale(1, 1) !important;
+}

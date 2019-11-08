@@ -6,6 +6,7 @@ function App() {
     const [ gameMap, setGameMap ] = useState([]);
     const [ effectiveSize, setEffectiveSite ] = useState('');
     const [ playerLocation, setPlayerLocation ] = useState(+size-1);
+    const [ gameStatus, setGameStatus ] = useState(false);
     const handleChange = e => {
         if(e.target.value > 15) return setSize(15);
         if(e.target.value === '') setGameMap([]);
@@ -15,22 +16,38 @@ function App() {
     const generateMap = () => {
         const gameMapArr = [];
         for(let k=0;k<+size;k++){
-            for(let k=0;k<+size;k++){
+            for(let k=0;k<+size;k++){                
             gameMapArr.push(1);
             }
+        }
+        let r = Math.floor(Math.random() * (Math.pow(size, 2) - 1));
+        if(r !== +size-1){
+            gameMapArr[r] = 'W';
+        } else {
+            gameMapArr[r + 1] = 'W';
         }
         gameMapArr[+size-1] = 'P';
         setEffectiveSite(+size);
         setPlayerLocation(+size-1);
+        setGameStatus(true);
         return setGameMap([...gameMapArr]);
     }
 
     const updatePlayerLocation = (currentLocation, newLocation) => {
         let gameMapArr = [...gameMap];
         gameMapArr[currentLocation] = 1;
-        gameMapArr[newLocation] = 'P';
+        if(gameMapArr[newLocation] === 'W'){
+            endGame();
+        } else {
+            gameMapArr[newLocation] = 'P';
+        }
         setPlayerLocation(newLocation);
         setGameMap(gameMapArr);
+    }
+
+    const endGame = () => {
+        setGameStatus(false);
+        console.log("Player morreu!")
     }
 
     const movePlayer = (action) => {
@@ -56,12 +73,11 @@ function App() {
             break;
 
             default:
-                console.log("Algo deu errado :/");
             break;
         }
     }
   return (
-    <div className="App">
+    <div className="App" onKeyPress={e => gameStatus ? movePlayer(e.key) : null} tabIndex="0">
         <div>
             <label htmlFor="size">Tamanho do mapa:</label>
             <input id="size" type="text" value={size} onChange={handleChange}/>
@@ -69,14 +85,18 @@ function App() {
         </div>
         
         <div className="Map" style={{columns: effectiveSize, columnGap: '2px'}}>
-            {gameMap.map((el, index) => <div key={index} onClick={() => console.log(index)} className="Square">{el === 'P' ? <p>PLAYER</p> : null}</div>)}
+            {gameMap.map((el, index) => 
+            <div key={index} onClick={() => console.log(index)} className="Square">
+                {el === 'P' ? <p>PLAYER</p> : null}
+                {el === 'W' ? <p>WUMPUS</p> : null}
+            </div>)}
         </div>
-        <div className="BtnDiv">
-            <button type="button" onClick={() => movePlayer('w')}>{"^"}</button>
+        <div className={`BtnDiv ${!gameStatus ? 'Disabled' : ''}`}>
+            <button type="button" disabled={!gameStatus} onClick={() => movePlayer('w')}>{"^"}</button>
             <div>
-                <button type="button" onClick={() => movePlayer('a')}>{"<"}</button>
-                <button type="button" onClick={() => movePlayer('s')}>{"v"}</button>
-                <button type="button" onClick={() => movePlayer('d')}>{">"}</button>
+                <button type="button" disabled={!gameStatus} onClick={() => movePlayer('a')}>{"<"}</button>
+                <button type="button" disabled={!gameStatus} onClick={() => movePlayer('s')}>{"v"}</button>
+                <button type="button" disabled={!gameStatus} onClick={() => movePlayer('d')}>{">"}</button>
             </div>
         </div>
     </div>
