@@ -66,7 +66,7 @@ function App() {
         setGameStatus(false);
         setModal({
             status: true,
-            message: <p>Player Morreu! <br/>Pontuação: {s - 1000}</p> ,
+            message: <>Player Morreu! <br/>Pontuação: {s - 1000}</> ,
             loading: false
         })
     }
