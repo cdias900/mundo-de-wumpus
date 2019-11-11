@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 
 import Modal from '../Layout/Modal';
 import classes from './styles.module.css';
+import Player from '../../assets/player.png';
+import Pit32 from '../../assets/pit32.png';
+import Pit16 from '../../assets/pit16.png';
+import Wumpus32 from '../../assets/wumpus32.png';
+import Wumpus16 from '../../assets/wumpus16.png';
+import Gold32 from '../../assets/gold32.png';
+import Gold16 from '../../assets/gold16.png';
 
 function Game() {
     const [ size, setSize ] = useState('3');
@@ -18,6 +25,7 @@ function Game() {
     const [ score, setScore ] = useState(0);
     const [ hasGold, setHasGold ] = useState(false);
     const [ pits, setPits ] = useState(1);
+    const [ visible, setVisible ] = useState(false);
 
     const handleChange = e => {
         if(e.target.value > 15) return setSize(15);
@@ -63,6 +71,7 @@ function Game() {
         }
         gameMapArr = lookForWumpus(gameMapArr, size-1);
         gameMapArr = lookForPit(gameMapArr, size-1);
+        setVisible(false);
         setPlayerMoves(0);
         setScore(0);
         setEffectiveSite(+size);
@@ -78,10 +87,11 @@ function Game() {
         setPlayerMoves(playerMoves + 1);     
         gameMapArr[currentLocation] = 1;
         if(gameMapArr[newLocation] === 'W' || gameMapArr[newLocation] === 'B'){
-            endGame(score - 1, false);
+            setVisible(true);
+            return endGame(score - 1, false);
         } else if(gameMapArr[newLocation] === 'G'){
             setHasGold(true);
-            gameMapArr[newLocation] = 'P';
+            gameMapArr[newLocation] = 'PG';
         } else {
             gameMapArr[newLocation] = 'P';
         }
@@ -175,7 +185,20 @@ function Game() {
         <div className={classes.Map} style={{columns: effectiveSize, columnGap: '2px'}}>
             {gameMap.map((el, index) =>
             <div key={index} onClick={() => console.log(index, el)} className={classes.Square}>
-                <p>{el !== 1 ? el : null}</p>
+                {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
+                {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
+                {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
+
+                <div className={classes.TopIcons}>
+                    {typeof el === 'string' && el.includes('W') && el !== 'W' ? <img src={Wumpus16} alt="Wumpus"></img> : null}
+                    {typeof el === 'string' && el.includes('B') && el !== 'B' ? <img src={Pit16} alt="Pit"></img> : null}
+                </div>
+                <div className={classes.BottomIcons}>
+                    {typeof el === 'string' && el.includes('P') ? <img src={Player} alt="Player"></img> : null}
+                    <div>
+                    {typeof el === 'string' && el.includes('G') && el !== 'G' ? <img src={Gold16} alt="Gold" style={{marginLeft: 5, width: '100%', height: '100%'}}></img> : null}
+                    </div>
+                </div>
             </div>)}
         </div>
         <div>Movimentos: {playerMoves}  Pontuação: {score}</div>
