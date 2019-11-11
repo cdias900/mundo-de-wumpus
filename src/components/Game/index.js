@@ -88,6 +88,7 @@ function Game() {
         gameMapArr[currentLocation] = 1;
         if(gameMapArr[newLocation] === 'W' || gameMapArr[newLocation] === 'B'){
             setVisible(true);
+            setGameMap(gameMapArr);
             return endGame(score - 1, false);
         } else if(gameMapArr[newLocation] === 'G'){
             setHasGold(true);
