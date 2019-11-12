@@ -1,7 +1,12 @@
   .Game {
+    padding: 10px;
     height: 100vh;
     text-align: center;
     outline: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
   }
   
   .Square {
@@ -21,6 +26,27 @@
   .Square img {
     max-width:100%;
     max-height:100%;
+  }
+
+  .MapSize {
+    width: 23%;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    margin-bottom: 20px;
+  }
+
+  .MapSize button {
+    border-radius: 7px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .Pits{
+    width: 18%;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
   }
   
   .Map {

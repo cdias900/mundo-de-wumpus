@@ -21,7 +21,7 @@ function Game() {
         status: false,
         message: '',
         loading: false
-    })
+    });
     const [ score, setScore ] = useState(0);
     const [ hasGold, setHasGold ] = useState(false);
     const [ pits, setPits ] = useState(1);
@@ -174,12 +174,12 @@ function Game() {
   return (
     <div className={classes.Game} onKeyPress={e => gameStatus ? movePlayer(e.key) : null} tabIndex="0">
         <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
-        <div>
+        <div className={classes.MapSize}>
             <label htmlFor="size">Tamanho do mapa:</label>
             <input style={{width: 30}} id="size" type="text" value={size} onChange={handleChange}/>
             <button onClick={generateMap}>Alterar Mapa</button>
         </div>
-        <div>
+        <div className={classes.Pits}>
             <label htmlFor="pits">Quantidade de buracos:</label>
             <input style={{width: 30}} id="pits" type="text" value={pits} onChange={handlePitsChange}/>
         </div>
