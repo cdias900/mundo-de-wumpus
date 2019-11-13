@@ -17,7 +17,7 @@ const modal = (props) => (
                 boxShadow: props.Loading ? 'none' : '',
                 transition: props.Loading ? 'none' : ''
             }}>
-            {!props.Loading ? <button onClick={props.closeModal}>&times;</button> : null}        
+            {!props.Loading ? <button className={classes.CloseButton} onClick={props.closeModal}>&times;</button> : null}        
             {props.Loading ? <Loader show /> : <p>{props.Message}</p>}
         </div>
     </>

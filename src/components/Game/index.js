@@ -26,6 +26,7 @@ function Game() {
     const [ hasGold, setHasGold ] = useState(false);
     const [ pits, setPits ] = useState(1);
     const [ visible, setVisible ] = useState(false);
+    const [ username, setUsername ] = useState('');
 
     const handleChange = e => {
         if(e.target.value > 15) return setSize(15);
@@ -132,11 +133,39 @@ function Game() {
         const scr = sc + (win ? 1000 : -1000);
         setModal({
             status: true,
-            message: <>Player {win ? "Ganhou" : "Morreu"}! <br/>Pontuação: {scr}</> ,
+            message: (
+                        <>
+                            Player {win ? "Ganhou" : "Morreu"}! 
+                            <br/>Pontuação: {scr}
+                        </>
+                    ),
             loading: false
         })
         setHasGold(false);
         setScore(scr);
+    }
+
+    const saveScore = () => {
+        setModal({
+            status: true,
+            message: (
+                        <>
+                            Digite seu nome: 
+                            <br/> <input style={{marginBottom: 5}} type="text" value={username} onChange={e => handleUsernameChange(e)}/>
+                            <br/> <button className={classes.Btn} type="button" onClick={uploadScore}>Salvar Pontuação</button>
+                        </>
+                    ),
+            loading: false
+        })
+    }
+
+    const handleUsernameChange = e => {
+        console.log(username);
+        setUsername(e.target.value);
+    }
+
+    const uploadScore = () => {
+        console.log("a");
     }
 
     const closeModal = () => setModal({
@@ -177,7 +206,7 @@ function Game() {
         <div className={classes.MapSize}>
             <label htmlFor="size">Tamanho do mapa:</label>
             <input style={{width: 30}} id="size" type="text" value={size} onChange={handleChange}/>
-            <button onClick={generateMap}>Alterar Mapa</button>
+            <button className={classes.Btn} onClick={generateMap}>Alterar Mapa</button>
         </div>
         <div className={classes.Pits}>
             <label htmlFor="pits">Quantidade de buracos:</label>
@@ -202,8 +231,7 @@ function Game() {
                 </div>
             </div>)}
         </div>
-        <div>Movimentos: {playerMoves}  Pontuação: {score}</div>
-        <div className={`${classes.BtnDiv} ${!gameStatus ? classes.Disabled : ''}`}>
+        <div className={classes.BtnDiv}>
             <button type="button" disabled={!gameStatus} onClick={() => movePlayer('w')}>{"^"}</button>
             <div>
                 <button type="button" disabled={!gameStatus} onClick={() => movePlayer('a')}>{"<"}</button>
@@ -211,6 +239,9 @@ function Game() {
                 <button type="button" disabled={!gameStatus} onClick={() => movePlayer('d')}>{">"}</button>
             </div>
         </div>
+        <div style={{marginTop: 20}}>Movimentos: {playerMoves}</div>
+        <div style={{marginTop: 10, marginBottom: 10}}>Pontuação: {score}</div>
+        <button className={classes.Btn} onClick={saveScore} disabled={score === 0 || gameStatus}>Salvar Pontuação</button>
     </div>
   );
 }

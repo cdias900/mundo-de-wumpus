@@ -36,10 +36,22 @@
     margin-bottom: 20px;
   }
 
-  .MapSize button {
+  .Btn{
     border-radius: 7px;
     cursor: pointer;
     outline: none;
+  }
+
+  .Btn:hover{
+    transform: scale(1.1, 1.1);
+  }
+
+  .Btn:disabled {
+    cursor: not-allowed;
+  }
+
+  .Btn:disabled:hover{
+    transform: scale(1, 1) !important;
   }
 
   .Pits{
@@ -70,11 +82,11 @@
     transform: scale(1.1, 1.1);
   }
   
-  .Disabled button{
+  .BtnDiv button:disabled{
     cursor: not-allowed !important;
   }
   
-  .Disabled button:hover{
+  .BtnDiv button:disabled:hover{
     transform: scale(1, 1) !important;
   }
 
