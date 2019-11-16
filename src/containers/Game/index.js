@@ -169,7 +169,7 @@ function Game() {
             .catch(error => setModal({
                 status: true,
                 message: 'Erro ao salvar pontuação!',
-                loading: true
+                loading: false
             }));
         
     }

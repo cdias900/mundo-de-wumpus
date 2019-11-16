@@ -2,4 +2,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+}
+
+.MainDiv table, td, tr{
+    border: 1px solid #ccc;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.MainDiv thead{
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.MainDiv td{
+    width: 200px;
 }
