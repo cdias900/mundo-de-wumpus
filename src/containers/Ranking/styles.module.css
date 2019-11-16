@@ -6,16 +6,26 @@
 }
 
 .MainDiv table, td, tr{
+    padding: 5px;
     border: 1px solid #ccc;
     text-align: center;
     border-collapse: collapse;
 }
 
 .MainDiv thead{
+    background-color: #ffef0a;
     font-weight: bold;
     font-size: 17px;
 }
 
+.MainDiv thead td{
+    height: 50px;
+}
+
 .MainDiv td{
     width: 200px;
+}
+
+.MainDiv tbody tr:nth-child(odd){
+    background-color: #f2f2f2;
 }

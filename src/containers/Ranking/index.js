@@ -12,11 +12,15 @@ export default function Ranking(){
         loading: true,
     });
     const [ rankingData, setRankingData ] = useState(null);
+    const [ visibleRanking, setVisibleRanking ] = useState(null);
+    const [ selectedValue, setSelectedValue ] = useState('');
 
     useEffect(() => {
         axios.get('/ranking.json')
             .then(res => {
-                setRankingData(sortRanking(Object.keys(res.data).map(key => res.data[key])));
+                const sortedRanking = sortRanking(Object.keys(res.data).map(key => res.data[key]));
+                setRankingData(sortedRanking);
+                setVisibleRanking(sortedRanking);
                 closeModal();
             })
             .catch(err => setModal({
@@ -34,7 +38,8 @@ export default function Ranking(){
         });
     }
 
-    const sortRanking = (rank) => {
+    const sortRanking = (r) => {
+        const rank = [...r];
         for(let i = 1; i < rank.length; i++){
             let j = i - 1;
             let aux = rank[i];
@@ -47,10 +52,29 @@ export default function Ranking(){
         return rank;
     }
 
+    const handleSelectedValueChanged = e => {
+        setSelectedValue(e.target.value);
+        filterRanking(rankingData, +e.target.value);
+    }
+
+    const filterRanking = (r, mapSize) => {
+        const rank = r ? [...r] : [];
+        return setVisibleRanking(mapSize !== 0 ? rank.filter(pos => pos.mapSize === mapSize) : rank);
+    }
+
+    const options = [];
+    for(let i = 3; i < 16; i++){
+        options.push(i);
+    }
     return (
         <div className={classes.MainDiv}>
             <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
             <h1>Ranking</h1>
+            <p>Tamanho do mapa:</p>
+            <select onChange={handleSelectedValueChanged} value={selectedValue} style={{marginBottom: 10, width: 120}}>
+                <option value="">Qualquer</option>
+                {options.map(opt => <option value={opt} key={opt}>{opt}</option>)}
+            </select>
             <table>
                 <thead>
                     <tr>
@@ -61,7 +85,7 @@ export default function Ranking(){
                     </tr>
                 </thead>
                 <tbody>
-                {rankingData && rankingData.map((r, i) => (
+                {visibleRanking && visibleRanking.map((r, i) => (
                     <tr key={i}>
                         <td>{i+1}</td>
                         <td>{r.username}</td>

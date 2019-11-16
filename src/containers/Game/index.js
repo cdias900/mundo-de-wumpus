@@ -28,6 +28,7 @@ function Game() {
     const [ pits, setPits ] = useState(1);
     const [ visible, setVisible ] = useState(false);
     const [ username, setUsername ] = useState('');
+    const [ scoreSaved, setScoreSaved ] = useState(false);
 
     const handleChange = e => {
         if(e.target.value > 15) return setSize(15);
@@ -73,6 +74,7 @@ function Game() {
         }
         gameMapArr = lookForWumpus(gameMapArr, size-1);
         gameMapArr = lookForPit(gameMapArr, size-1);
+        setScoreSaved(false);
         setVisible(false);
         setPlayerMoves(0);
         setScore(0);
@@ -161,11 +163,14 @@ function Game() {
             loading: true
         });
         axios.post('/ranking.json', { username, score, mapSize: effectiveSize })
-            .then(res => setModal({
+            .then(res => {
+                setScoreSaved(true);
+                setModal({
                 status: true,
                 message: 'Pontuação salva com sucesso!',
                 loading: false
-            }))
+                })
+            })
             .catch(error => setModal({
                 status: true,
                 message: 'Erro ao salvar pontuação!',
@@ -248,7 +253,7 @@ function Game() {
         <div style={{marginTop: 20}}>Movimentos: {playerMoves}</div>
         <div style={{marginTop: 10, marginBottom: 10}}>Pontuação: {score}</div>
         <input style={{marginBottom: 10}} type="text" placeholder="Nome de usuário" value={username} onChange={e => setUsername(e.target.value)}/>
-        <button className={classes.Btn} onClick={saveScore} disabled={score === 0 || gameStatus}>Salvar Pontuação</button>
+        <button className={classes.Btn} onClick={saveScore} disabled={score === 0 || gameStatus || scoreSaved}>Salvar Pontuação</button>
     </div>
   );
 }
