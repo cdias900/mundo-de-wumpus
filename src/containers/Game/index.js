@@ -1,3 +1,4 @@
+// Área de importação dos componentes que serão utilizados na renderização em tela
 import React, { useState } from 'react';
 
 import Modal from '../../components/Layout/Modal';
@@ -10,31 +11,35 @@ import Wumpus16 from '../../assets/wumpus16.png';
 import Gold32 from '../../assets/gold32.png';
 import Gold16 from '../../assets/gold16.png';
 import axios from '../../services/axios';
+//
 
 function Game() {
-    const [ size, setSize ] = useState('3');
-    const [ gameMap, setGameMap ] = useState([]);
-    const [ effectiveSize, setEffectiveSite ] = useState('');
-    const [ playerLocation, setPlayerLocation ] = useState(+size-1);
-    const [ gameStatus, setGameStatus ] = useState(false);
-    const [ playerMoves, setPlayerMoves ] = useState(0);
+    // Define as variáveis que serão usadas para atualizar o estado do jogo
+    const [ size, setSize ] = useState('3'); // Tamanho do mapa digitado pelo usuário
+    const [ gameMap, setGameMap ] = useState([]); // Array que guarda o mapa do jogo
+    const [ effectiveSize, setEffectiveSite ] = useState(''); // Tamanho do mapa mostrado em tela, após o usuário clicar no botão "Alterar Mapa"
+    const [ playerLocation, setPlayerLocation ] = useState(+size-1); // Localização do jogador no mapa
+    const [ gameStatus, setGameStatus ] = useState(false); // Status do jogo (Ativo, finalizado)
+    const [ playerMoves, setPlayerMoves ] = useState(0); // Quantidade de movimentos do jogador
     const [ modal, setModal ] = useState({
         status: false,
         message: '',
         loading: false
-    });
-    const [ score, setScore ] = useState(0);
-    const [ hasGold, setHasGold ] = useState(false);
-    const [ pits, setPits ] = useState(1);
-    const [ visible, setVisible ] = useState(false);
-    const [ username, setUsername ] = useState('');
-    const [ scoreSaved, setScoreSaved ] = useState(false);
+    }); // Tela de carregamento/avisos mostrada na tela ocasionalmente
+    const [ score, setScore ] = useState(0); // Pontuação do jogador
+    const [ hasGold, setHasGold ] = useState(false); // Inidica se o jogador já pegou o ouro ou não
+    const [ pits, setPits ] = useState(1); // Quantidade de buracos no mapa
+    const [ visible, setVisible ] = useState(false); // Indica se os items do mapa são visíveis ou não
+    const [ username, setUsername ] = useState(''); // Nome de usuário digitado pelo jogador
+    const [ scoreSaved, setScoreSaved ] = useState(false); // Indica se a pontuação daquele jogo já foi salva
+    //
 
-    const handleChange = e => {
-        if(e.target.value > 15) return setSize(15);
-        if(e.target.value === '') setGameMap([]);
-        setPits(1);
-        return setSize(e.target.value.replace(/\D+/g, ''));
+
+    const handleChange = e => { // Atualiza o tamanho do mapa digitado pelo usuário
+        if(e.target.value > 15) return setSize(15); // Define 15 como o tamanho máximo do mapa
+        if(e.target.value === '') setGameMap([]); // Remove o mapa se o tamanho do mapa for apagado
+        setPits(1); // Altera a quantidade de burcacos de volta para 1
+        return setSize(e.target.value.replace(/\D+/g, '')); // Remove tudo digitado pelo usuário que não for numérico
     }
 
     const handlePitsChange = e => {
@@ -42,38 +47,39 @@ function Game() {
         return setPits(e.target.value.replace(/\D+/g, ''));
     }
 
-    const generateMap = () => {
-        if(size <= 2) return;
+    const generateMap = () => { // Gera a array que contém o mapa do jogo
+        if(size < 3) return; // Não gera o mapa se o tamanho for menor que 3
         let gameMapArr = [];
-        for(let k=0;k<+size;k++){
+        for(let k=0;k<+size;k++){ // Inicializa a array com o tamanho escolhido pelo usuário
             for(let k=0;k<+size;k++){
             gameMapArr.push(1);
             }
         }
-        gameMapArr[size-1] = 'P';
+        gameMapArr[size-1] = 'P'; // Coloca o player na posição mais a esquerda inferior
         let r;
-        for(let i=0;i<pits;i++){
+        for(let i=0;i<pits;i++){ // Adiciona os buracos em posições aleatórias
             do{
                 r = Math.floor(Math.random() * (Math.pow(size, 2)));
             }while(gameMapArr[r] !== 1);
             gameMapArr[r] = 'B';
         }
 
-        do{
+        do{ // Adiciona o ouro em uma posição aleatória
             r = Math.floor(Math.random() * (Math.pow(size, 2)));
         } while(gameMapArr[r] !== 1);
         gameMapArr[r] = 'G';
 
         let flag = false;
-        while(!flag){
+        while(!flag){ // Adiciona o Wumpus em uma posição aleatória
             r = Math.floor(Math.random() * (Math.pow(size, 2)));
             if(gameMapArr[r] === 1){
                 gameMapArr[r] = 'W';
                 flag = true;
             }
         }
-        gameMapArr = lookForWumpus(gameMapArr, size-1);
-        gameMapArr = lookForPit(gameMapArr, size-1);
+        // Reseta todas as variáveis relacionadas ao estado do jogo, para iniciar um novo jogo
+        gameMapArr = checkPlayerSurroundings(gameMapArr, size-1, 'W');
+        gameMapArr = checkPlayerSurroundings(gameMapArr, size-1, 'B');
         setScoreSaved(false);
         setVisible(false);
         setPlayerMoves(0);
@@ -85,55 +91,45 @@ function Game() {
         return setGameMap([...gameMapArr]);
     }
 
-    const updatePlayerLocation = (currentLocation, newLocation) => {
+    const updatePlayerLocation = (currentLocation, newLocation) => { // Atualiza a localização do jogador no mapa
         let gameMapArr = [...gameMap];
-        setScore(score - 1);
-        setPlayerMoves(playerMoves + 1);     
-        gameMapArr[currentLocation] = 1;
-        if(gameMapArr[newLocation] === 'W' || gameMapArr[newLocation] === 'B'){
+        setScore(score - 1); // Penalidade de 1 ponto por movimento
+        setPlayerMoves(playerMoves + 1); // Soma 1 a quantidade de movimentos realizados
+        gameMapArr[currentLocation] = 1; // Remove o jogador da localização atual
+        if(gameMapArr[newLocation] === 'W' || gameMapArr[newLocation] === 'B'){ // Se a nova localização do jogador for aonde está o wumpus (W) ou um buraco (B), o jogo é finalizado e os elementos do mapa são mostrados
             setVisible(true);
             setGameMap(gameMapArr);
             return endGame(score - 1, false);
-        } else if(gameMapArr[newLocation] === 'G'){
+        } else if(gameMapArr[newLocation] === 'G'){ // Se a nova localização do jogador for aonde está o ouro (G), a variável hasGold é atualizada para inidicar que o jogador agora possui o ouro
             setHasGold(true);
-            gameMapArr[newLocation] = 'PG';
-        } else {
+            gameMapArr[newLocation] = 'PG'; // Adiciona o jogador a localização, junto com o ouro, verificado na renderização
+        } else { // Caso nenhuma das opções acima seja verdadeira, o jogador é adicionado a sua nova localização
             gameMapArr[newLocation] = 'P';
         }
-        if(newLocation === effectiveSize - 1 && hasGold){
+        if(newLocation === effectiveSize - 1 && hasGold){ // Se o jogador voltar a sua posição inicial e possuir o ouro, o jogo é finalizado
             endGame(score - 1, true);
         }
 
-        gameMapArr = lookForWumpus(gameMapArr, newLocation);
-        gameMapArr = lookForPit(gameMapArr, newLocation);
+        gameMapArr = checkPlayerSurroundings(gameMapArr, newLocation, 'W'); // Verifica se o wumpus está ao redor do jogador
+        gameMapArr = checkPlayerSurroundings(gameMapArr, newLocation, 'B'); // Verifica se há um buraco ao redor do jogador
 
-        setPlayerLocation(newLocation);
-        setGameMap(gameMapArr);
+        setPlayerLocation(newLocation); // Atualiza a localização do jogador
+        setGameMap(gameMapArr); // Atualiza o mapa
     }
 
-    const lookForWumpus = (gameMapArr, newLocation) => {
-        if((newLocation % effectiveSize !== effectiveSize-1 && gameMapArr[newLocation + 1] === 'W')
-        || (newLocation % effectiveSize !== 0 && gameMapArr[newLocation - 1] === 'W')
-        || (newLocation < (Math.pow(size, 2) - effectiveSize) && gameMapArr[newLocation + effectiveSize] === 'W')
-        || (newLocation >= effectiveSize && gameMapArr[newLocation - effectiveSize] === 'W')){
-            gameMapArr[newLocation] += 'W';
+    const checkPlayerSurroundings = (gameMapArr, newLocation, element) => { // Verifica se o elemento recebido por parâmetro está ao redor do jogador
+        if((newLocation % effectiveSize !== effectiveSize-1 && gameMapArr[newLocation + 1] === element)
+        || (newLocation % effectiveSize !== 0 && gameMapArr[newLocation - 1] === element)
+        || (newLocation < (Math.pow(size, 2) - effectiveSize) && gameMapArr[newLocation + effectiveSize] === element)
+        || (newLocation >= effectiveSize && gameMapArr[newLocation - effectiveSize] === element)){
+            gameMapArr[newLocation] += element;
         }
         return gameMapArr;
     }
 
-    const lookForPit = (gameMapArr, newLocation) => {
-        if((newLocation % effectiveSize !== effectiveSize-1 && gameMapArr[newLocation + 1] === 'B')
-        || (newLocation % effectiveSize !== 0 && gameMapArr[newLocation - 1] === 'B')
-        || (newLocation < (Math.pow(size, 2) - effectiveSize) && gameMapArr[newLocation + effectiveSize] === 'B')
-        || (newLocation >= effectiveSize && gameMapArr[newLocation - effectiveSize] === 'B')){
-            gameMapArr[newLocation] += 'B';
-        }
-        return gameMapArr;
-    }
-
-    const endGame = (sc, win) => {
-        setGameStatus(false);
-        const scr = sc + (win ? 1000 : -1000);
+    const endGame = (sc, win) => { // Finaliza o jogo
+        setGameStatus(false); // Atualiza o status do jogo para finalizado
+        const scr = sc + (win ? 1000 : -1000); // Adiciona 1000 ao score se o jogador venceu o jogo ou subtrai 1000 se o jogador perdeu
         setModal({
             status: true,
             message: (
@@ -143,13 +139,13 @@ function Game() {
                         </>
                     ),
             loading: false
-        })
+        }); // Ativa tela de aviso, com a mensagem de vitória ou derrota
         setHasGold(false);
         setScore(scr);
     }
 
-    const saveScore = () => {
-        if(username === ''){
+    const saveScore = () => { // Salva a pontuação do jogador no banco de dados
+        if(username === ''){ // Se o nome de usuário não for digitado, mostra uma mensagem ao usuário
             return setModal({
                 status: true,
                 message: 'Digite um nome de usuário antes de salvar!',
@@ -161,9 +157,9 @@ function Game() {
             status: true,
             message: '',
             loading: true
-        });
-        axios.post('/ranking.json', { username, score, mapSize: effectiveSize })
-            .then(res => {
+        }); // Ativa tela de carregamento
+        axios.post('/ranking.json', { username, score, mapSize: effectiveSize }) // Manda os dados do usuário para o banco de dados
+            .then(res => { // Se os dados foram salvos com sucesso, mostra a mensagem de sucesso ao usuário
                 setScoreSaved(true);
                 setModal({
                 status: true,
@@ -171,7 +167,7 @@ function Game() {
                 loading: false
                 })
             })
-            .catch(error => setModal({
+            .catch(error => setModal({ // Se houve algum erro no salvamento das informações, mostra a mensagem de erro ao usuário
                 status: true,
                 message: 'Erro ao salvar pontuação!',
                 loading: false
@@ -179,13 +175,13 @@ function Game() {
         
     }
 
-    const closeModal = () => setModal({
+    const closeModal = () => setModal({ // Fecha a tela de carregamento/avisos
         status: false,
         message: '',
         loading: false
     });
 
-    const movePlayer = (action) => {
+    const movePlayer = (action) => { // Recebe o input do usuário, e baseado na tecla pressionada, verifica se o jogador pode se mover, e caso possa, atualiza sua localização
         switch(action){
             case 'w':
                 if(playerLocation % effectiveSize === 0) return;
@@ -211,6 +207,8 @@ function Game() {
             break;
         }
     }
+
+  // Renderiza todo o conteúdo na tela
   return (
     <div className={classes.Game} onKeyPress={e => gameStatus ? movePlayer(e.key) : null} tabIndex="0">
         <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
@@ -225,7 +223,7 @@ function Game() {
         </div>
         <div className={classes.Map} style={{columns: effectiveSize, columnGap: '2px'}}>
             {gameMap.map((el, index) =>
-            <div key={index} onClick={() => console.log(index, el)} className={classes.Square}>
+            <div key={index} className={classes.Square}>
                 {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
                 {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
                 {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
