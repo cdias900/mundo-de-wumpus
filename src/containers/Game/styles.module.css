@@ -76,6 +76,7 @@
     font-weight: bold;
     margin: 2px 2px;
     cursor: pointer;
+    outline: none;
   }
   
   .BtnDiv button:hover{

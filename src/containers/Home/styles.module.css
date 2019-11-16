@@ -27,6 +27,7 @@
     font-weight: bold;
     font-size: 20px;
     color: #000;
+    outline: none;
 }
 
 .BtnDiv button:hover{

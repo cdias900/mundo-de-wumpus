@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import Modal from '../Layout/Modal';
+import Modal from '../../components/Layout/Modal';
 import classes from './styles.module.css';
 import Player from '../../assets/player.png';
 import Pit32 from '../../assets/pit32.png';
@@ -9,6 +9,7 @@ import Wumpus32 from '../../assets/wumpus32.png';
 import Wumpus16 from '../../assets/wumpus16.png';
 import Gold32 from '../../assets/gold32.png';
 import Gold16 from '../../assets/gold16.png';
+import axios from '../../services/axios';
 
 function Game() {
     const [ size, setSize ] = useState('3');
@@ -146,26 +147,31 @@ function Game() {
     }
 
     const saveScore = () => {
+        if(username === ''){
+            return setModal({
+                status: true,
+                message: 'Digite um nome de usuário antes de salvar!',
+                loading: false
+            });
+        }
+
         setModal({
             status: true,
-            message: (
-                        <>
-                            Digite seu nome: 
-                            <br/> <input style={{marginBottom: 5}} type="text" value={username} onChange={e => handleUsernameChange(e)}/>
-                            <br/> <button className={classes.Btn} type="button" onClick={uploadScore}>Salvar Pontuação</button>
-                        </>
-                    ),
-            loading: false
-        })
-    }
-
-    const handleUsernameChange = e => {
-        console.log(username);
-        setUsername(e.target.value);
-    }
-
-    const uploadScore = () => {
-        console.log("a");
+            message: '',
+            loading: true
+        });
+        axios.post('/ranking.json', { username, score, mapSize: effectiveSize })
+            .then(res => setModal({
+                status: true,
+                message: 'Pontuação salva com sucesso!',
+                loading: false
+            }))
+            .catch(error => setModal({
+                status: true,
+                message: 'Erro ao salvar pontuação!',
+                loading: true
+            }));
+        
     }
 
     const closeModal = () => setModal({
@@ -241,6 +247,7 @@ function Game() {
         </div>
         <div style={{marginTop: 20}}>Movimentos: {playerMoves}</div>
         <div style={{marginTop: 10, marginBottom: 10}}>Pontuação: {score}</div>
+        <input style={{marginBottom: 10}} type="text" placeholder="Nome de usuário" value={username} onChange={e => setUsername(e.target.value)}/>
         <button className={classes.Btn} onClick={saveScore} disabled={score === 0 || gameStatus}>Salvar Pontuação</button>
     </div>
   );

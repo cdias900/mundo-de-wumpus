@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import Game from './components/Game';
-import Ranking from './components/Ranking';
-import Home from './components/Home';
+import Game from './containers/Game';
+import Ranking from './containers/Ranking';
+import Home from './containers/Home';
 
 export default function Routes(){
     return (
