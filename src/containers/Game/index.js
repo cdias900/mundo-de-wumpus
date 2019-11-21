@@ -225,9 +225,9 @@ function Game() {
         <div className={classes.Map} style={{columns: effectiveSize, columnGap: '2px'}}>
             {gameMap.map((el, index) =>
             <div key={index} className={classes.Square}>
-                {typeof el === 'string' && el === 'W' && !visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
-                {typeof el === 'string' && el === 'B' && !visible ? <img src={Pit32} alt="Pit"></img> : null}
-                {typeof el === 'string' && el === 'G' && !visible ? <img src={Gold32} alt="Gold"></img> : null}
+                {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
+                {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
+                {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
 
                 <div className={classes.TopIcons}>
                     {typeof el === 'string' && el.includes('W') && el !== 'W' ? <img src={Wumpus16} alt="Wumpus"></img> : null}
