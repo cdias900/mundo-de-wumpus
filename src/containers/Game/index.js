@@ -11,6 +11,7 @@ import Wumpus16 from '../../assets/wumpus16.png';
 import Gold32 from '../../assets/gold32.png';
 import Gold16 from '../../assets/gold16.png';
 import Arrow32 from '../../assets/arrow32.png';
+import Blood32 from '../../assets/blood32.png';
 import axios from '../../services/axios';
 //
 
@@ -238,12 +239,54 @@ function Game() {
         });
         setGameMap([...gameMapArr]);
         gameMapArr[playerLocation] = gameMapArr[playerLocation].replace('F', '');
+        switch(direction){
+            case 'w':
+                for(let k = playerLocation; k % effectiveSize > 0; k--){
+                    if(gameMapArr[k-1] === 'W') {
+                        gameMapArr[k-1] = 'S';
+                        //gameMapArr[playerLocation].replace('W', '');
+                    } 
+                }
+            break;
+
+            case 'a':
+                for(let k = playerLocation; k - effectiveSize > 0; k-=effectiveSize){
+                    if(gameMapArr[k] === 'W') {
+                        gameMapArr[k] = 'S';
+                        //gameMapArr[playerLocation].replace('W', '');
+                    } 
+                }
+            break;
+
+            case 's':
+                for(let k = playerLocation; k % effectiveSize < effectiveSize - 1; k--){
+                    if(gameMapArr[k+1] === 'W') {
+                        gameMapArr[k+1] = 'S';
+                        //gameMapArr[playerLocation].replace('W', '');
+                    } 
+                }
+            break;
+
+            case 'd':
+                for(let k = playerLocation; k + effectiveSize < Math.pow(effectiveSize, 2); k+=effectiveSize){
+                    if(gameMapArr[k] === 'W') {
+                        gameMapArr[k] = 'S';
+                        //gameMapArr[playerLocation].replace('W', '');
+                    } 
+                }
+            break;
+            
+            default:
+            break;
+        }
+        gameMapArr = checkPlayerSurroundings(gameMapArr, playerLocation, 'W');
+        gameMapArr = checkPlayerSurroundings(gameMapArr, playerLocation, 'B');
         setGameStatus(false);
         setTimeout(() => {
             setGameMap([...gameMapArr]);
             setGameStatus(true);
-            
             divEl.current.focus();
+
         }, 2000);
     }
 
@@ -309,10 +352,11 @@ function Game() {
         </div>
         <div className={classes.Map} style={{columns: effectiveSize, columnGap: '2px'}}>
             {gameMap.map((el, index) =>
-            <div key={index} className={classes.Square}>
+            <div key={index} className={classes.Square} onClick={() => console.log(el)}>
                 {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
                 {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
                 {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
+                {typeof el === 'string' && el === 'S' ? <img src={Blood32} alt="Blood"></img> : null}
                 {typeof el === 'string' && el === 'F' ? <img src={Arrow32} alt="Gold"></img> : null}
 
                 <div className={classes.TopIcons}>
