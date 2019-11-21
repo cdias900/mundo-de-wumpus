@@ -112,6 +112,7 @@
   }
   
   .ArrowW{
+    z-index: 2000;
     position: absolute;
     -webkit-animation-name: arrowW;
     -webkit-animation-duration: 3s;
@@ -138,6 +139,7 @@
   }
 
   .ArrowS{
+    z-index: 2000;
     position: absolute;
     -webkit-animation-name: arrowS;
     -webkit-animation-duration: 3s;
@@ -164,6 +166,7 @@
   }
 
   .ArrowA{
+    z-index: 2000;
     position: absolute;
     -webkit-animation-name: arrowA;
     -webkit-animation-duration: 3s;
@@ -190,6 +193,7 @@
   }
 
   .ArrowD{
+    z-index: 2000;
     position: absolute;
     -webkit-animation-name: arrowD;
     -webkit-animation-duration: 3s;

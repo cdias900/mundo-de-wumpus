@@ -216,6 +216,13 @@ function Game() {
                 updatePlayerLocation(playerLocation, playerLocation + effectiveSize);
             break;
 
+            case 'f':
+                if(arrow.amount > 0) setArrow({
+                                        ...arrow,
+                                        status: true,
+                                    });
+            break;
+
             default:
             return;
         }
@@ -226,7 +233,7 @@ function Game() {
         gameMapArr[playerLocation] += "F";
         setArrow({
             status: false,
-            amount: 0,
+            amount: arrow.amount - 1,
             direction: direction.toUpperCase()
         });
         setGameMap([...gameMapArr]);
@@ -260,6 +267,13 @@ function Game() {
             case 'd':
                 if(playerLocation + effectiveSize >= Math.pow(effectiveSize, 2)) return;
                 moveArrow(action);
+            break;
+
+            case 'f':
+                setArrow({
+                    ...arrow,
+                    status: false,
+                });
             break;
 
             default:
