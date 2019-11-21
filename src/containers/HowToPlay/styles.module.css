@@ -1,0 +1,28 @@
+.MainDiv{
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.MainDiv p{
+  text-align: justify;
+  align-self: flex-start;
+}
+
+.MainDiv a{
+  text-decoration: none;
+  color: #008cff
+}
+
+.MainDiv a:hover{
+  text-decoration: underline;
+}
+
+@media (min-width: 1200px){
+  .MainDiv{
+    width: 40%;
+  }
+}

@@ -17,7 +17,7 @@ function Game() {
     // Define as variáveis que serão usadas para atualizar o estado do jogo
     const [ size, setSize ] = useState('3'); // Tamanho do mapa digitado pelo usuário
     const [ gameMap, setGameMap ] = useState([]); // Array que guarda o mapa do jogo
-    const [ effectiveSize, setEffectiveSite ] = useState(''); // Tamanho do mapa mostrado em tela, após o usuário clicar no botão "Alterar Mapa"
+    const [ effectiveSize, setEffectiveSize ] = useState(''); // Tamanho do mapa mostrado em tela, após o usuário clicar no botão "Alterar Mapa"
     const [ playerLocation, setPlayerLocation ] = useState(+size-1); // Localização do jogador no mapa
     const [ gameStatus, setGameStatus ] = useState(false); // Status do jogo (Ativo, finalizado)
     const [ playerMoves, setPlayerMoves ] = useState(0); // Quantidade de movimentos do jogador
@@ -78,16 +78,16 @@ function Game() {
             }
         }
         // Reseta todas as variáveis relacionadas ao estado do jogo, para iniciar um novo jogo
-        gameMapArr = checkPlayerSurroundings(gameMapArr, size-1, 'W');
-        gameMapArr = checkPlayerSurroundings(gameMapArr, size-1, 'B');
         setScoreSaved(false);
         setVisible(false);
         setPlayerMoves(0);
         setScore(0);
-        setEffectiveSite(+size);
+        setEffectiveSize(+size);
         setGameStatus(true);
         setHasGold(false);
         setPlayerLocation(size-1);
+        gameMapArr = checkPlayerSurroundings(gameMapArr, size-1, 'W', size);
+        gameMapArr = checkPlayerSurroundings(gameMapArr, size-1, 'B', size);
         return setGameMap([...gameMapArr]);
     }
 
@@ -117,11 +117,12 @@ function Game() {
         setGameMap(gameMapArr); // Atualiza o mapa
     }
 
-    const checkPlayerSurroundings = (gameMapArr, newLocation, element) => { // Verifica se o elemento recebido por parâmetro está ao redor do jogador
-        if((newLocation % effectiveSize !== effectiveSize-1 && gameMapArr[newLocation + 1] === element)
-        || (newLocation % effectiveSize !== 0 && gameMapArr[newLocation - 1] === element)
-        || (newLocation < (Math.pow(size, 2) - effectiveSize) && gameMapArr[newLocation + effectiveSize] === element)
-        || (newLocation >= effectiveSize && gameMapArr[newLocation - effectiveSize] === element)){
+    const checkPlayerSurroundings = (gameMapArr, newLocation, element, size = null) => { // Verifica se o elemento recebido por parâmetro está ao redor do jogador
+        const s = effectiveSize || size;
+        if((newLocation % s !== s-1 && gameMapArr[newLocation + 1] === element)
+        || (newLocation % s !== 0 && gameMapArr[newLocation - 1] === element)
+        || (newLocation < (Math.pow(size, 2) - s) && gameMapArr[newLocation + s] === element)
+        || (newLocation >= s && gameMapArr[newLocation - s] === element)){
             gameMapArr[newLocation] += element;
         }
         return gameMapArr;
@@ -215,7 +216,7 @@ function Game() {
         <div className={classes.MapSize}>
             <label htmlFor="size">Tamanho do mapa:</label>
             <input style={{width: 30}} id="size" type="text" value={size} onChange={handleChange}/>
-            <button className={classes.Btn} onClick={generateMap}>Alterar Mapa</button>
+            <button className={classes.Btn} onClick={generateMap}>Novo Jogo</button>
         </div>
         <div className={classes.Pits}>
             <label htmlFor="pits">Quantidade de buracos:</label>
@@ -224,9 +225,9 @@ function Game() {
         <div className={classes.Map} style={{columns: effectiveSize, columnGap: '2px'}}>
             {gameMap.map((el, index) =>
             <div key={index} className={classes.Square}>
-                {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
-                {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
-                {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
+                {typeof el === 'string' && el === 'W' && !visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
+                {typeof el === 'string' && el === 'B' && !visible ? <img src={Pit32} alt="Pit"></img> : null}
+                {typeof el === 'string' && el === 'G' && !visible ? <img src={Gold32} alt="Gold"></img> : null}
 
                 <div className={classes.TopIcons}>
                     {typeof el === 'string' && el.includes('W') && el !== 'W' ? <img src={Wumpus16} alt="Wumpus"></img> : null}

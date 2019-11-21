@@ -12,10 +12,15 @@ export default function Home(){
             <h1>Mundo de Wumpus</h1>
             <div className={classes.BtnDiv}>
                 <div className={classes.divJogar}>
-                    <Link to="/game"><button className={classes.Jogar}>Jogar</button></Link>
+                    <Link to="/game"><button className={[classes.Btn, classes.Jogar].join(' ')}>Jogar</button></Link>
                 </div>
-                <div className={classes.divRanking}>
-                    <Link to="/ranking"><button className={classes.Ranking}>Ranking</button></Link>
+                <div className={classes.BtnSubDiv}>
+                    <div className={classes.divRanking}>
+                        <Link to="/howtoplay"><button className={[classes.Btn, classes.HowToPlay].join(' ')}>Como Jogar</button></Link>
+                    </div>
+                    <div className={classes.divRanking}>
+                        <Link to="/ranking"><button className={[classes.Btn, classes.Ranking].join(' ')}>Ranking</button></Link>
+                    </div>
                 </div>
             </div>
         </div>

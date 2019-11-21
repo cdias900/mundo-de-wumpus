@@ -5,6 +5,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Game from './containers/Game';
 import Ranking from './containers/Ranking';
 import Home from './containers/Home';
+import HowToPlay from './containers/HowToPlay';
 //
 
 export default function Routes(){
@@ -15,6 +16,7 @@ export default function Routes(){
             <Switch>
                 <Route path="/game" component={Game} />
                 <Route path="/ranking" component={Ranking} />
+                <Route path="/howtoplay" component={HowToPlay} />
                 <Route component={Home} />
             </Switch>
         </BrowserRouter>

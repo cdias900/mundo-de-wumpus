@@ -12,12 +12,20 @@
     width: 20%;
     min-width: 250px;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.BtnSubDiv{
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-start;
+    margin-top: 10px;
 }
 
-.BtnDiv button{
+.Btn{
     border: .5px solid #ccc;
     border-radius: 10px;
     cursor: pointer;
@@ -48,4 +56,8 @@
 
 .Ranking{
     background-color: #ffef0a;
+}
+
+.HowToPlay{
+    background-color: #00ffdd;
 }
