@@ -106,3 +106,111 @@
   .ActiveArrow{
     background-color: #5af500 !important;
   }
+
+  .UsedArrow{
+    background-color: #e70a0a !important;
+  }
+  
+  .ArrowW{
+    position: absolute;
+    -webkit-animation-name: arrowW;
+    -webkit-animation-duration: 3s;
+    animation-name: arrowW;
+    animation-duration: 3s;
+  }
+
+  @-webkit-keyframes arrowW{
+    from{
+      transform: translate(0px, 0px) rotate(270deg);
+    }
+    to{
+      transform: translate(0px, -1000px) rotate(270deg);
+    }
+  }
+
+  @keyframes arrowW{
+    from{
+      transform: translate(0px, 0px) rotate(270deg);
+    }
+    to{
+      transform: translate(0px, -1000px) rotate(270deg);
+    }
+  }
+
+  .ArrowS{
+    position: absolute;
+    -webkit-animation-name: arrowS;
+    -webkit-animation-duration: 3s;
+    animation-name: arrowS;
+    animation-duration: 3s;
+  }
+
+  @-webkit-keyframes arrowS{
+    from{
+      transform: translate(0px, 0px) rotate(90deg);
+    }
+    to{
+      transform: translate(0px, 1000px) rotate(90deg);
+    }
+  }
+
+  @keyframes arrowS{
+    from{
+      transform: translate(0px, 0px) rotate(90deg);
+    }
+    to{
+      transform: translate(0px, 1000px) rotate(90deg);
+    }
+  }
+
+  .ArrowA{
+    position: absolute;
+    -webkit-animation-name: arrowA;
+    -webkit-animation-duration: 3s;
+    animation-name: arrowA;
+    animation-duration: 3s;
+  }
+
+  @-webkit-keyframes arrowA{
+    from{
+      transform: translate(0px, 0px) rotate(180deg);
+    }
+    to{
+      transform: translate(-1000px, 0px) rotate(180deg);
+    }
+  }
+
+  @keyframes arrowA{
+    from{
+      transform: translate(0px, 0px) rotate(180deg);
+    }
+    to{
+      transform: translate(-1000px, 0px) rotate(180deg);
+    }
+  }
+
+  .ArrowD{
+    position: absolute;
+    -webkit-animation-name: arrowD;
+    -webkit-animation-duration: 3s;
+    animation-name: arrowD;
+    animation-duration: 3s;
+  }
+
+  @-webkit-keyframes arrowD{
+    from{
+      transform: translate(0px, 0px);
+    }
+    to{
+      transform: translate(1000px, 0px);
+    }
+  }
+
+  @keyframes arrowD{
+    from{
+      transform: translate(0px, 0px);
+    }
+    to{
+      transform: translate(1000px, 0px);
+    }
+  }

@@ -1,5 +1,5 @@
 // Área de importação dos componentes que serão utilizados na renderização em tela
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import Modal from '../../components/Layout/Modal';
 import classes from './styles.module.css';
@@ -35,8 +35,10 @@ function Game() {
     const [ scoreSaved, setScoreSaved ] = useState(false); // Indica se a pontuação daquele jogo já foi salva
     const [ arrow, setArrow ] = useState({
         amount: 1,
-        status: false
+        status: false,
+        direction: '',
     });
+    const divEl = useRef(null);
     //
 
 
@@ -91,6 +93,11 @@ function Game() {
         setGameStatus(true);
         setHasGold(false);
         setPlayerLocation(size-1);
+        setArrow({
+            status: false,
+            amount: 1,
+            direction: ''
+        })
         gameMapArr = checkPlayerSurroundings(gameMapArr, size-1, 'W', size);
         gameMapArr = checkPlayerSurroundings(gameMapArr, size-1, 'B', size);
         return setGameMap([...gameMapArr]);
@@ -214,27 +221,45 @@ function Game() {
         }
     }
 
+    const moveArrow = (direction) => {
+        let gameMapArr = [...gameMap];
+        gameMapArr[playerLocation] += "F";
+        setArrow({
+            status: false,
+            amount: 0,
+            direction: direction.toUpperCase()
+        });
+        setGameMap([...gameMapArr]);
+        gameMapArr[playerLocation] = gameMapArr[playerLocation].replace('F', '');
+        setGameStatus(false);
+        setTimeout(() => {
+            setGameMap([...gameMapArr]);
+            setGameStatus(true);
+            
+            divEl.current.focus();
+        }, 2000);
+    }
+
     const shootArrow = (action) => {
         switch(action){
             case 'w':
                 if(playerLocation % effectiveSize === 0) return;
-                
+                moveArrow(action);
             break;
 
             case 'a':
                 if(playerLocation - effectiveSize < 0) return; 
-
-
+                moveArrow(action);
             break;
 
             case 's':
                 if(playerLocation % effectiveSize === size - 1) return;
-
+                moveArrow(action);
             break;
 
             case 'd':
                 if(playerLocation + effectiveSize >= Math.pow(effectiveSize, 2)) return;
-
+                moveArrow(action);
             break;
 
             default:
@@ -257,7 +282,7 @@ function Game() {
 
   // Renderiza todo o conteúdo na tela
   return (
-    <div className={classes.Game} onKeyPress={e => gameStatus ? moveOrShoot(e.key) : null} tabIndex="0">
+    <div className={classes.Game} onKeyPress={e => gameStatus ? moveOrShoot(e.key) : null} tabIndex="0" ref={divEl}>
         <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
         <div className={classes.MapSize}>
             <label htmlFor="size">Tamanho do mapa:</label>
@@ -282,6 +307,7 @@ function Game() {
                 </div>
                 <div className={classes.BottomIcons}>
                     {typeof el === 'string' && el.includes('P') ? <img src={Player} alt="Player"></img> : null}
+                    {typeof el === 'string' && el.includes('F') ? <img src={Arrow32} className={classes['Arrow'+arrow.direction]} alt="Arrow"></img> : null}
                     <div>
                     {typeof el === 'string' && el.includes('G') && el !== 'G' ? <img src={Gold16} alt="Gold" style={{marginLeft: 5, width: '100%', height: '100%'}}></img> : null}
                     </div>
@@ -295,7 +321,7 @@ function Game() {
                 <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('s')}>{"v"}</button>
                 <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('d')}>{">"}</button>
             </div>
-            <button type="button" className={arrow.status ? classes.ActiveArrow : ''} disabled={!gameStatus} onClick={toggleArrow}><img src={Arrow32} alt="Arrow"/></button>
+            <button type="button" className={arrow.status ? classes.ActiveArrow : arrow.amount > 0 ? '' : classes.UsedArrow} disabled={!gameStatus || !arrow.amount > 0} onClick={toggleArrow}><img src={Arrow32} alt="Arrow"/></button>
         </div>
         
         <div style={{marginTop: 20}}>Movimentos: {playerMoves}</div>
