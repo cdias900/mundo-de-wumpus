@@ -10,6 +10,7 @@ import Wumpus32 from '../../assets/wumpus32.png';
 import Wumpus16 from '../../assets/wumpus16.png';
 import Gold32 from '../../assets/gold32.png';
 import Gold16 from '../../assets/gold16.png';
+import Arrow32 from '../../assets/arrow32.png';
 import axios from '../../services/axios';
 //
 
@@ -32,6 +33,10 @@ function Game() {
     const [ visible, setVisible ] = useState(false); // Indica se os items do mapa são visíveis ou não
     const [ username, setUsername ] = useState(''); // Nome de usuário digitado pelo jogador
     const [ scoreSaved, setScoreSaved ] = useState(false); // Indica se a pontuação daquele jogo já foi salva
+    const [ arrow, setArrow ] = useState({
+        amount: 1,
+        status: false
+    });
     //
 
 
@@ -205,13 +210,54 @@ function Game() {
             break;
 
             default:
+            return;
+        }
+    }
+
+    const shootArrow = (action) => {
+        switch(action){
+            case 'w':
+                if(playerLocation % effectiveSize === 0) return;
+                
             break;
+
+            case 'a':
+                if(playerLocation - effectiveSize < 0) return; 
+
+
+            break;
+
+            case 's':
+                if(playerLocation % effectiveSize === size - 1) return;
+
+            break;
+
+            case 'd':
+                if(playerLocation + effectiveSize >= Math.pow(effectiveSize, 2)) return;
+
+            break;
+
+            default:
+            return;
+        }
+    }
+
+    const moveOrShoot = (action) => {
+        return arrow.status ? shootArrow(action) : movePlayer(action);
+    }
+
+    const toggleArrow = () => {
+        if(arrow.amount > 0){
+            setArrow({
+                ...arrow,
+                status: !arrow.status
+            });
         }
     }
 
   // Renderiza todo o conteúdo na tela
   return (
-    <div className={classes.Game} onKeyPress={e => gameStatus ? movePlayer(e.key) : null} tabIndex="0">
+    <div className={classes.Game} onKeyPress={e => gameStatus ? moveOrShoot(e.key) : null} tabIndex="0">
         <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
         <div className={classes.MapSize}>
             <label htmlFor="size">Tamanho do mapa:</label>
@@ -228,6 +274,7 @@ function Game() {
                 {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
                 {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
                 {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
+                {typeof el === 'string' && el === 'F' ? <img src={Arrow32} alt="Gold"></img> : null}
 
                 <div className={classes.TopIcons}>
                     {typeof el === 'string' && el.includes('W') && el !== 'W' ? <img src={Wumpus16} alt="Wumpus"></img> : null}
@@ -242,13 +289,15 @@ function Game() {
             </div>)}
         </div>
         <div className={classes.BtnDiv}>
-            <button type="button" disabled={!gameStatus} onClick={() => movePlayer('w')}>{"^"}</button>
+            <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('w')}>{"^"}</button>
             <div>
-                <button type="button" disabled={!gameStatus} onClick={() => movePlayer('a')}>{"<"}</button>
-                <button type="button" disabled={!gameStatus} onClick={() => movePlayer('s')}>{"v"}</button>
-                <button type="button" disabled={!gameStatus} onClick={() => movePlayer('d')}>{">"}</button>
+                <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('a')}>{"<"}</button>
+                <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('s')}>{"v"}</button>
+                <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('d')}>{">"}</button>
             </div>
+            <button type="button" className={arrow.status ? classes.ActiveArrow : ''} disabled={!gameStatus} onClick={toggleArrow}><img src={Arrow32} alt="Arrow"/></button>
         </div>
+        
         <div style={{marginTop: 20}}>Movimentos: {playerMoves}</div>
         <div style={{marginTop: 10, marginBottom: 10}}>Pontuação: {score}</div>
         <input style={{marginBottom: 10}} type="text" placeholder="Nome de usuário" value={username} onChange={e => setUsername(e.target.value)}/>
