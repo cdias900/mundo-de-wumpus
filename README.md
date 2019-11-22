@@ -18,6 +18,12 @@ Para jogar em seu computador é necessário ter o **Node.js** instalado, caso ai
 - Enquanto o servidor da aplicação estiver sendo executado (enquanto o `cmd` estiver aberto) a **página automaticamente atualizará após qualquer alteração no código ser salva**. Erros de compilação serão mostrados no `cmd` e na página.
   
 ## Como editar o projeto
+
+####Editor Recomendado
+O editor recomendado para fazer alterações no projeto é o [Visual Studio Code](https://code.visualstudio.com/download) (VS Code). Toda a pasta do projeto pode ser aberta no VS Code, e o servidor da aplicação pode ser iniciado também pelo [terminal integrado](https://code.visualstudio.com/docs/editor/integrated-terminal) ao editor.
+
+####Estrutura de Arquivos
+
 Os arquivos que podem ser editados, estão dentro da pasta `src`, todas as outras páginas e arquivos foram geradas automáticamente durante a criação do projeto (Para saber mais, [clique aqui](https://github.com/facebook/create-react-app#create-react-app--)).
 
 - Os arquivos `index.js` e `App.js` apenas adicionam o conteúdo da aplicação na tela. 
