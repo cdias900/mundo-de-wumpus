@@ -131,10 +131,10 @@ function Game() {
     }
 
     const checkPlayerSurroundings = (gameMapArr, newLocation, element, size = null) => { // Verifica se o elemento recebido por parâmetro está ao redor do jogador
-        const s = effectiveSize || size;
+        const s = effectiveSize || +size;
         if((newLocation % s !== s-1 && gameMapArr[newLocation + 1] === element)
         || (newLocation % s !== 0 && gameMapArr[newLocation - 1] === element)
-        || (newLocation < (Math.pow(size, 2) - s) && gameMapArr[newLocation + s] === element)
+        || (newLocation < (Math.pow(s, 2) - s) && gameMapArr[newLocation + s] === element)
         || (newLocation >= s && gameMapArr[newLocation - s] === element)){
             gameMapArr[newLocation] += element;
         }
@@ -217,7 +217,7 @@ function Game() {
                 updatePlayerLocation(playerLocation, playerLocation + effectiveSize);
             break;
 
-            case 'f':
+            case 'f': // Habilita a ativação/desativação da flecha utilizando a tecla F do teclado
                 if(arrow.amount > 0) setArrow({
                                         ...arrow,
                                         status: true,
@@ -229,32 +229,33 @@ function Game() {
         }
     }
 
-    const moveArrow = (direction) => {
+    const moveArrow = (direction) => { // Atira a flecha para a direção escolhida
+        setScore(score - 9);
         let gameMapArr = [...gameMap];
-        gameMapArr[playerLocation] += "F";
+        gameMapArr[playerLocation] += "F"; // Adiciona flecha visualmente
         setArrow({
             status: false,
             amount: arrow.amount - 1,
             direction: direction.toUpperCase()
         });
         setGameMap([...gameMapArr]);
-        gameMapArr[playerLocation] = gameMapArr[playerLocation].replace('F', '');
-        switch(direction){
+        gameMapArr[playerLocation] = gameMapArr[playerLocation].replace('F', ''); // Remove flecha visualmente
+        switch(direction){ // Verifica se o Wumpus está no caminho da flecha, e o elimina caso esteja
             case 'w':
-                for(let k = playerLocation; k % effectiveSize > 0; k--){
+                for(let k = playerLocation; k % effectiveSize > 0; k--){ 
                     if(gameMapArr[k-1] === 'W') {
-                        gameMapArr[k-1] = 'S';
-                        //gameMapArr[playerLocation].replace('W', '');
-                    } 
+                        gameMapArr[k-1] = 'S'; // Transforma o Wumpus em sangue
+                        gameMapArr[playerLocation] = gameMapArr[playerLocation].replace('W', ''); // Remove o indicador do Wumpus do quadrado do Player, caso houver
+                    }
                 }
             break;
 
             case 'a':
-                for(let k = playerLocation; k - effectiveSize > 0; k-=effectiveSize){
+                for(let k = playerLocation; k >= 0; k-=effectiveSize){
                     if(gameMapArr[k] === 'W') {
                         gameMapArr[k] = 'S';
-                        //gameMapArr[playerLocation].replace('W', '');
-                    } 
+                        gameMapArr[playerLocation] = gameMapArr[playerLocation].replace('W', '');
+                    }
                 }
             break;
 
@@ -262,35 +263,32 @@ function Game() {
                 for(let k = playerLocation; k % effectiveSize < effectiveSize - 1; k--){
                     if(gameMapArr[k+1] === 'W') {
                         gameMapArr[k+1] = 'S';
-                        //gameMapArr[playerLocation].replace('W', '');
-                    } 
+                        gameMapArr[playerLocation] = gameMapArr[playerLocation].replace('W', '');
+                    }
                 }
             break;
 
             case 'd':
-                for(let k = playerLocation; k + effectiveSize < Math.pow(effectiveSize, 2); k+=effectiveSize){
+                for(let k = playerLocation; k < Math.pow(effectiveSize, 2); k+=effectiveSize){
                     if(gameMapArr[k] === 'W') {
                         gameMapArr[k] = 'S';
-                        //gameMapArr[playerLocation].replace('W', '');
-                    } 
+                        gameMapArr[playerLocation] = gameMapArr[playerLocation].replace('W', '');
+                    }
                 }
             break;
             
             default:
             break;
         }
-        gameMapArr = checkPlayerSurroundings(gameMapArr, playerLocation, 'W');
-        gameMapArr = checkPlayerSurroundings(gameMapArr, playerLocation, 'B');
-        setGameStatus(false);
-        setTimeout(() => {
-            setGameMap([...gameMapArr]);
-            setGameStatus(true);
-            divEl.current.focus();
-
-        }, 2000);
+        setGameStatus(false); // Desativa inputs do usuário enquanto a animação é executada
+        setTimeout(() => { // A animação da flecha dura 2 segundos, é preciso esperar ela terminar antes de executar o código dentro dessa função
+            setGameMap([...gameMapArr]); // Altera o mapa
+            setGameStatus(true); // Ativa novamente os inputs do usuário
+            divEl.current.focus(); // Altera o foco para a div principal para evitar bugs com o uso das teclas WASD
+        }, 2000); 
     }
 
-    const shootArrow = (action) => {
+    const shootArrow = (action) => { // Verifica se é possível atirar a flecha para a direção selecionada e caso sim, atira a flecha
         switch(action){
             case 'w':
                 if(playerLocation % effectiveSize === 0) return;
@@ -312,7 +310,7 @@ function Game() {
                 moveArrow(action);
             break;
 
-            case 'f':
+            case 'f': // Habilita a ativação/desativação da flecha utilizando a tecla F do teclado
                 setArrow({
                     ...arrow,
                     status: false,
@@ -324,11 +322,11 @@ function Game() {
         }
     }
 
-    const moveOrShoot = (action) => {
+    const moveOrShoot = (action) => { // Verifica se a flecha está ativa e deve ser atirada, ou se deve mover o player
         return arrow.status ? shootArrow(action) : movePlayer(action);
     }
 
-    const toggleArrow = () => {
+    const toggleArrow = () => { // Ativa/Desativa a flecha
         if(arrow.amount > 0){
             setArrow({
                 ...arrow,
@@ -352,7 +350,7 @@ function Game() {
         </div>
         <div className={classes.Map} style={{columns: effectiveSize, columnGap: '2px'}}>
             {gameMap.map((el, index) =>
-            <div key={index} className={classes.Square} onClick={() => console.log(el)}>
+            <div key={index} className={classes.Square} >
                 {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
                 {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
                 {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
