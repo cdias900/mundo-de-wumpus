@@ -20,13 +20,15 @@ Para jogar em seu computador é necessário ter o **Node.js** instalado, caso ai
 ## Como editar o projeto
 
 ####Editor Recomendado
+
 O editor recomendado para fazer alterações no projeto é o [Visual Studio Code](https://code.visualstudio.com/download) (VS Code). Toda a pasta do projeto pode ser aberta no VS Code, e o servidor da aplicação pode ser iniciado também pelo [terminal integrado](https://code.visualstudio.com/docs/editor/integrated-terminal) ao editor.
 
 ####Estrutura de Arquivos
 
 Os arquivos que podem ser editados, estão dentro da pasta `src`, todas as outras páginas e arquivos foram geradas automáticamente durante a criação do projeto (Para saber mais, [clique aqui](https://github.com/facebook/create-react-app#create-react-app--)).
 
-- Os arquivos `index.js` e `App.js` apenas adicionam o conteúdo da aplicação na tela. 
+- Os arquivos `index.js` e `App.js` apenas adicionam o conteúdo da aplicação na tela.
+- O arquivo `serviceWorker.js` foi gerado automaticamente durante a criação do projeto, e não deve ser alterado. O objetivo desse arquivo é transformar a aplicação em um *PWA* ([*Progressive Web App*](https://developers.google.com/web/progressive-web-apps)), que permite que o site seja acessado mesmo quando em um ambiente offline e possa ser instalado no desktop e em smartphones (Android e IOS).
 - A pasta `containers` contém todas as páginas, que são as partes do código que controlam o estado ([*state*](https://reactjs.org/docs/state-and-lifecycle.html)) da aplicação, definindo o que será renderizado na tela.
 - A pasta `components` contém todos os componentes utilizados nas páginas. Componentes são elementos [*JSX*](https://reactjs.org/docs/introducing-jsx.html) que são reutilizados em vários trechos da aplicação, que para evitar a repetição excessiva de código, são exportados para outro arquivo e somente importados e utilizados onde necessário.
 - A pasta `services` contém a instância do [*axios*](https://github.com/axios/axios#axios) que é utilizada para salvar e buscar os dados do ranking salvos no banco de dados, nesse caso, hospedado no [*Firebase*](https://firebase.google.com/).
