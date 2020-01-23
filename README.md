@@ -1,7 +1,7 @@
 Este projeto foi feito utlizando a biblioteca [**ReactJS**](https://reactjs.org/), para saber mais sobre esta biblioteca, [clique aqui](https://reactjs.org/).
 
 ## Jogando online
- Para jogar online, [clique aqui](http://mundodewumpus.netlify.com/).
+ Para jogar online, [clique aqui](http://wumpus.cdias.dev/).
 
 ## Jogando em seu computador
 Para jogar em seu computador é necessário ter o **Node.js** instalado, caso ainda não o tenha instalado, [clique aqui](https://nodejs.org/pt-br/).
