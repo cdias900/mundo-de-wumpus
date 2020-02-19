@@ -1,5 +1,6 @@
 // Área de importação dos componentes que serão utilizados na renderização em tela
 import React, { useState, useRef } from 'react';
+import AdSense from 'react-adsense';
 
 import Modal from '../../components/Layout/Modal';
 import classes from './styles.module.css';
@@ -337,54 +338,69 @@ function Game() {
 
   // Renderiza todo o conteúdo na tela
   return (
-    <div className={classes.Game} onKeyPress={e => gameStatus ? moveOrShoot(e.key) : null} tabIndex="0" ref={divEl}>
-        <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
-        <div className={classes.MapSize}>
-            <label htmlFor="size">Tamanho do mapa:</label>
-            <input style={{width: 30}} id="size" type="text" value={size} onChange={handleChange}/>
-            <button className={classes.Btn} onClick={generateMap}>Novo Jogo</button>
-        </div>
-        <div className={classes.Pits}>
-            <label htmlFor="pits">Quantidade de buracos:</label>
-            <input style={{width: 30}} id="pits" type="text" value={pits} onChange={handlePitsChange}/>
-        </div>
-        <div className={classes.Map} style={{columns: effectiveSize, columnGap: '2px'}}>
-            {gameMap.map((el, index) =>
-            <div key={index} className={classes.Square} >
-                {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
-                {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
-                {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
-                {typeof el === 'string' && el === 'S' ? <img src={Blood32} alt="Blood"></img> : null}
-                {typeof el === 'string' && el === 'F' ? <img src={Arrow32} alt="Gold"></img> : null}
-
-                <div className={classes.TopIcons}>
-                    {typeof el === 'string' && el.includes('W') && el !== 'W' ? <img src={Wumpus16} alt="Wumpus"></img> : null}
-                    {typeof el === 'string' && el.includes('B') && el !== 'B' ? <img src={Pit16} alt="Pit"></img> : null}
-                </div>
-                <div className={classes.BottomIcons}>
-                    {typeof el === 'string' && el.includes('P') ? <img src={Player} alt="Player"></img> : null}
-                    {typeof el === 'string' && el.includes('F') ? <img src={Arrow32} className={classes['Arrow'+arrow.direction]} alt="Arrow"></img> : null}
-                    <div>
-                    {typeof el === 'string' && el.includes('G') && el !== 'G' ? <img src={Gold16} alt="Gold" style={{marginLeft: 5, width: '100%', height: '100%'}}></img> : null}
-                    </div>
-                </div>
-            </div>)}
-        </div>
-        <div className={classes.BtnDiv}>
-            <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('w')}>{"^"}</button>
-            <div>
-                <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('a')}>{"<"}</button>
-                <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('s')}>{"v"}</button>
-                <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('d')}>{">"}</button>
+      <>
+        <div className={classes.Game} onKeyPress={e => gameStatus ? moveOrShoot(e.key) : null} tabIndex="0" ref={divEl}>
+            <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
+            <div className={classes.MapSize}>
+                <label htmlFor="size">Tamanho do mapa:</label>
+                <input style={{width: 30}} id="size" type="text" value={size} onChange={handleChange}/>
+                <button className={classes.Btn} onClick={generateMap}>Novo Jogo</button>
             </div>
-            <button type="button" className={arrow.status ? classes.ActiveArrow : arrow.amount > 0 ? '' : classes.UsedArrow} disabled={!gameStatus || !arrow.amount > 0} onClick={toggleArrow}><img src={Arrow32} alt="Arrow"/></button>
+            <div className={classes.Pits}>
+                <label htmlFor="pits">Quantidade de buracos:</label>
+                <input style={{width: 30}} id="pits" type="text" value={pits} onChange={handlePitsChange}/>
+            </div>
+            <div className={classes.Map} style={{columns: effectiveSize, columnGap: '2px'}}>
+                {gameMap.map((el, index) =>
+                <div key={index} className={classes.Square} >
+                    {typeof el === 'string' && el === 'W' && visible ? <img src={Wumpus32} alt="Wumpus"></img> : null}
+                    {typeof el === 'string' && el === 'B' && visible ? <img src={Pit32} alt="Pit"></img> : null}
+                    {typeof el === 'string' && el === 'G' && visible ? <img src={Gold32} alt="Gold"></img> : null}
+                    {typeof el === 'string' && el === 'S' ? <img src={Blood32} alt="Blood"></img> : null}
+                    {typeof el === 'string' && el === 'F' ? <img src={Arrow32} alt="Gold"></img> : null}
+
+                    <div className={classes.TopIcons}>
+                        {typeof el === 'string' && el.includes('W') && el !== 'W' ? <img src={Wumpus16} alt="Wumpus"></img> : null}
+                        {typeof el === 'string' && el.includes('B') && el !== 'B' ? <img src={Pit16} alt="Pit"></img> : null}
+                    </div>
+                    <div className={classes.BottomIcons}>
+                        {typeof el === 'string' && el.includes('P') ? <img src={Player} alt="Player"></img> : null}
+                        {typeof el === 'string' && el.includes('F') ? <img src={Arrow32} className={classes['Arrow'+arrow.direction]} alt="Arrow"></img> : null}
+                        <div>
+                        {typeof el === 'string' && el.includes('G') && el !== 'G' ? <img src={Gold16} alt="Gold" style={{marginLeft: 5, width: '100%', height: '100%'}}></img> : null}
+                        </div>
+                    </div>
+                </div>)}
+            </div>
+            <div className={classes.BtnDiv}>
+                <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('w')}>{"^"}</button>
+                <div>
+                    <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('a')}>{"<"}</button>
+                    <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('s')}>{"v"}</button>
+                    <button type="button" disabled={!gameStatus} onClick={() => moveOrShoot('d')}>{">"}</button>
+                </div>
+                <button type="button" className={arrow.status ? classes.ActiveArrow : arrow.amount > 0 ? '' : classes.UsedArrow} disabled={!gameStatus || !arrow.amount > 0} onClick={toggleArrow}><img src={Arrow32} alt="Arrow"/></button>
+            </div>
+            
+            <div style={{marginTop: 20}}>Movimentos: {playerMoves}</div>
+            <div style={{marginTop: 10, marginBottom: 10}}>Pontuação: {score}</div>
+            <input style={{marginBottom: 10}} type="text" placeholder="Nome de usuário" value={username} onChange={e => setUsername(e.target.value)}/>
+            <button className={classes.Btn} onClick={saveScore} disabled={score === 0 || gameStatus || scoreSaved}>Salvar Pontuação</button>
         </div>
-        
-        <div style={{marginTop: 20}}>Movimentos: {playerMoves}</div>
-        <div style={{marginTop: 10, marginBottom: 10}}>Pontuação: {score}</div>
-        <input style={{marginBottom: 10}} type="text" placeholder="Nome de usuário" value={username} onChange={e => setUsername(e.target.value)}/>
-        <button className={classes.Btn} onClick={saveScore} disabled={score === 0 || gameStatus || scoreSaved}>Salvar Pontuação</button>
-    </div>
+        <div
+        style={{
+        width: '100%',
+        }}
+        >
+            <AdSense.Google
+            client="ca-pub-4408046485122960"
+            slot="3869776338"
+            style={{ display: 'block' }}
+            format="auto"
+            responsive="true"
+            />
+        </div>
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
 // Área de importação dos componentes que serão utilizados na renderização em tela
 import React, { useEffect, useState } from 'react';
+import AdSense from 'react-adsense';
 
 import Modal from '../../components/Layout/Modal';
 import axios from '../../services/axios';
@@ -73,34 +74,49 @@ export default function Ranking(){
 
     //Renderiza o conteúdo em tela
     return (
-        <div className={classes.MainDiv}>
-            <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
-            <h1>Ranking</h1>
-            <p>Tamanho do mapa:</p>
-            <select onChange={handleSelectedValueChanged} value={selectedValue} style={{marginBottom: 10, width: 120}}>
-                <option value="">Qualquer</option>
-                {options.map(opt => <option value={opt} key={opt}>{opt}</option>)}
-            </select>
-            <table>
-                <thead>
-                    <tr>
-                        <td>Classificação</td>
-                        <td>Nome</td>
-                        <td>Pontuação</td>
-                        <td>Tamanho do Mapa</td>
-                    </tr>
-                </thead>
-                <tbody>
-                {visibleRanking && visibleRanking.map((r, i) => (
-                    <tr key={i}>
-                        <td>{i+1}</td>
-                        <td>{r.username}</td>
-                        <td>{r.score}</td>
-                        <td>{r.mapSize}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-        </div>
+        <>
+            <div className={classes.MainDiv}>
+                <Modal show={modal.status} Loading={modal.loading} Message={modal.message} closeModal={closeModal}/>
+                <h1>Ranking</h1>
+                <p>Tamanho do mapa:</p>
+                <select onChange={handleSelectedValueChanged} value={selectedValue} style={{marginBottom: 10, width: 120}}>
+                    <option value="">Qualquer</option>
+                    {options.map(opt => <option value={opt} key={opt}>{opt}</option>)}
+                </select>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>Classificação</td>
+                            <td>Nome</td>
+                            <td>Pontuação</td>
+                            <td>Tamanho do Mapa</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {visibleRanking && visibleRanking.map((r, i) => (
+                        <tr key={i}>
+                            <td>{i+1}</td>
+                            <td>{r.username}</td>
+                            <td>{r.score}</td>
+                            <td>{r.mapSize}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+            <div
+            style={{
+            width: '100%',
+            }}
+            >
+                <AdSense.Google
+                client="ca-pub-4408046485122960"
+                slot="3869776338"
+                style={{ display: 'block' }}
+                format="auto"
+                responsive="true"
+                />
+            </div>
+        </>
     );
 }
